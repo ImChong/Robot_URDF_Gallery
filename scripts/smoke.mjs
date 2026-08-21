@@ -61,10 +61,30 @@ page.on('console', (msg) => {
 page.on('pageerror', (err) => consoleErrors.push(`pageerror: ${err.message}`));
 
 await page.goto(`${base}/web/`, { waitUntil: 'networkidle' });
+// The grid is rendered from data/robots.json, which main.js fetches after the
+// document loads, so networkidle can resolve a beat before the cards exist on a
+// busy runner. Wait for the first one rather than counting the instant
+// navigation returns.
+await page
+  .locator('.card')
+  .first()
+  .waitFor({ timeout: 30000 })
+  .catch(() => {});
 const cards = await page.locator('.card').count();
 console.log(`gallery: ${cards} cards`);
 if (cards !== shown.length) {
   console.error(`  ✗ expected ${shown.length} cards`);
+  // main.js turns a failed registry fetch into a paragraph in the grid and
+  // returns, raising nothing this script would otherwise see. Printing what the
+  // grid actually says is the difference between "0 cards" and a reason: on
+  // 2026-08-21 a run on main reported 0 cards, rendered all 75 robots fine, and
+  // left nothing in the log to explain the red.
+  const why = await page
+    .locator('#grid')
+    .innerText()
+    .catch(() => '');
+  const first = why.trim().split('\n')[0];
+  if (first) console.error(`    grid says: ${first}`);
   process.exitCode = 1;
 }
 
@@ -167,5 +187,9 @@ if (relevant.length) {
 }
 
 await browser.close();
-console.log(`\n${targets.length - failures}/${targets.length} robots rendered`);
 if (failures) process.exitCode = 1;
+// Every robot can render and the run still be a failure — the gallery check
+// above sets the exit code too. A bare "75/75 robots rendered" above a non-zero
+// exit reads as a passing run, so say which it was.
+console.log(`\n${targets.length - failures}/${targets.length} robots rendered`);
+if (process.exitCode) console.error('smoke test FAILED — see the errors above');
