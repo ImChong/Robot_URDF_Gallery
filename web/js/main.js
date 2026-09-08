@@ -90,6 +90,36 @@ function setupTheme() {
 }
 
 /**
+ * The coffee cup in the header: one <dialog> holding the WeChat code, so the
+ * browser owns the backdrop, the focus trap and Escape. Its text is marked up
+ * with `data-i18n`, so switching language needs nothing from here.
+ */
+function setupSponsor() {
+  const button = document.getElementById('sponsor-toggle');
+  const dialog = document.getElementById('sponsor-dialog');
+  if (!button || !dialog) return;
+  button.addEventListener('click', () => {
+    if (typeof dialog.showModal === 'function') dialog.showModal();
+    else dialog.setAttribute('open', '');
+  });
+  document.getElementById('sponsor-close')?.addEventListener('click', () => {
+    if (typeof dialog.close === 'function') dialog.close();
+    else dialog.removeAttribute('open');
+  });
+  // Clicking the backdrop closes it. The backdrop is not a node of its own, so
+  // the test is the pointer against the dialog's box — `event.target === dialog`
+  // would also fire on the dialog's own padding and close it from the inside.
+  dialog.addEventListener('click', (event) => {
+    const box = dialog.getBoundingClientRect();
+    const outside =
+      event.clientX < box.left || event.clientX > box.right ||
+      event.clientY < box.top || event.clientY > box.bottom;
+    // A keyboard-driven click reports (0, 0) and is never the backdrop.
+    if (outside && (event.clientX || event.clientY)) dialog.close();
+  });
+}
+
+/**
  * One button that names the language you would switch *to*, as on
  * Humanoid_Robot_Learning_Paper_Notebooks. Switching applies in place —
  * a reload would paint the other language's HTML for a frame, and would
@@ -115,6 +145,7 @@ function syncDocumentTitle() {
 
 async function main() {
   setupTheme();
+  setupSponsor();
   // Language is already on the static nodes: js/i18n-boot.js ran first.
   if (document.documentElement.classList.contains('i18n-pending')) {
     setLang(detectLang());
