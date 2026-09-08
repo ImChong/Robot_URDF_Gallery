@@ -125,6 +125,11 @@ const STRINGS = {
     'dl.working': 'Preparing…',
     'dl.failed': 'Download failed',
     'theme.toggle': 'Switch theme',
+    'sponsor.toggle': 'Support the author',
+    'sponsor.title': 'Support me',
+    'sponsor.hint': 'Scan with WeChat to support the author ☕',
+    'sponsor.qrAlt': 'WeChat payment QR code',
+    'sponsor.closeLabel': 'Close',
     'panel.resize': 'Drag to resize · double-click to reset',
     'panel.resizeTree': 'Joint tree panel width',
     'panel.resources': 'Resources',
@@ -570,6 +575,11 @@ const STRINGS = {
     'dl.working': '正在准备…',
     'dl.failed': '下载失败',
     'theme.toggle': '切换主题',
+    'sponsor.toggle': '赞助作者',
+    'sponsor.title': '赞助我',
+    'sponsor.hint': '微信扫一扫，赞助支持作者 ☕',
+    'sponsor.qrAlt': '微信收款码',
+    'sponsor.closeLabel': '关闭',
     'panel.resize': '拖动调整宽度 · 双击复位',
     'panel.resizeTree': '关节树面板宽度',
     'panel.resources': '资源链接',
@@ -969,6 +979,9 @@ export function applyStatic(root = document) {
   }
   for (const el of root.querySelectorAll('[data-i18n-aria-label]')) {
     el.setAttribute('aria-label', t(el.dataset.i18nAriaLabel));
+  }
+  for (const el of root.querySelectorAll('[data-i18n-alt]')) {
+    el.alt = t(el.dataset.i18nAlt);
   }
 }
 

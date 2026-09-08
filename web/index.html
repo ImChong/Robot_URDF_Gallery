@@ -42,6 +42,12 @@
         <span class="lang-label">中文</span>
       </button>
       <button id="theme-toggle" class="theme-toggle" data-i18n-title="theme.toggle" aria-label="Toggle dark mode">☀️</button>
+      <!-- Last in the row: the one control here that asks something of the
+           visitor rather than changing how the page reads. -->
+      <button id="sponsor-toggle" class="sponsor-toggle" type="button"
+              data-i18n-title="sponsor.toggle" data-i18n-aria-label="sponsor.toggle"
+              aria-haspopup="dialog" aria-controls="sponsor-dialog"
+              aria-label="Support the author">☕</button>
     </div>
   </div>
 </header>
@@ -518,6 +524,21 @@
   </div>
 
   <p class="custom-hint" data-i18n="custom.hint"></p>
+</dialog>
+
+<!-- ------------------------------ sponsor -------------------------------- -->
+<!-- The same WeChat code as on Robot_Learning_Paper_Notebooks; nothing here
+     talks to a payment backend, it is one image behind a button. -->
+<dialog id="sponsor-dialog" class="sponsor-dialog" aria-labelledby="sponsor-dialog-title">
+  <div class="custom-head">
+    <h2 id="sponsor-dialog-title" data-i18n="sponsor.title">赞助我</h2>
+    <button type="button" class="dialog-close" id="sponsor-close"
+            data-i18n-aria-label="sponsor.closeLabel" aria-label="Close">✕</button>
+  </div>
+  <p class="sponsor-hint" data-i18n="sponsor.hint"></p>
+  <img class="sponsor-qr" id="sponsor-qr" src="./sponsor/wechat-pay.png"
+       data-i18n-alt="sponsor.qrAlt" alt="WeChat payment QR code"
+       width="828" height="1124" loading="lazy" decoding="async">
 </dialog>
 
 <noscript><style>html.i18n-pending body { visibility: visible !important; }</style></noscript>
